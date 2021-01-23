@@ -24,12 +24,12 @@ def test():
     ## Encrypt
     context = ts.context(
             ts.SCHEME_TYPE.CKKS,
-            poly_modulus_degree = 8192,
-            coeff_mod_bit_sizes = [40, 21, 21, 21, 21, 21, 21, 40]
+            poly_modulus_degree = 8192*2,
+            coeff_mod_bit_sizes = [60, 40, 40, 40, 40, 40, 40, 60]
           )
 
     context.generate_galois_keys()
-    context.global_scale = 2**21
+    context.global_scale = 2**40
 
     enc_x = ts.ckks_vector(context, x_list)
     enc_y = ts.ckks_vector(context, y_list)
@@ -48,24 +48,25 @@ class EncryptedLinReg:
         self.count = 0 ## Number of operations
         self.dbeta = np.zeros(self.N)
         self.beta = 0.5
-        self.learning_rate = 0.1
+        self.learning_rate = 0.01
         self.err = np.ones(self.N)
         self.enc_x = enc_x
         self.enc_y = enc_y
         self.context = context ## Shouldn't be in the final iteration - is just for testing the regression
 
     def recalc_context(self):
-            self.context = ts.context(
-            ts.SCHEME_TYPE.CKKS,
-            poly_modulus_degree=8192,
-            coeff_mod_bit_sizes = [40, 21, 21, 21, 21, 21, 21, 40]
-          )
-            self.context.generate_galois_keys()
-            self.context.global_scale = 2**21
+        self.context = ts.context(
+                ts.SCHEME_TYPE.CKKS,
+                poly_modulus_degree = 8192*2,
+                coeff_mod_bit_sizes = [60, 40, 40, 40, 40, 40, 40, 60]
+              )
+
+        self.context.generate_galois_keys()
+        self.context.global_scale = 2**40
 
     def calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
-        #self.loss = self.err.dot(self.err)
+        self.loss = self.err.dot(self.err)
 
 
     def predict(self):
@@ -89,7 +90,7 @@ class EncryptedLinReg:
 
                 print("BOOTSTRAP")
 
-            print(f"Beta, round {k}", self.beta)#, "Loss\t", self.loss.decrypt())
+            print(f"Beta, round {k}", self.beta.decrypt(), "Loss\t", self.loss.decrypt())
 
         
             #print("Beta, round {k}", self.beta, self.dbeta, "Loss\t", self.loss)
