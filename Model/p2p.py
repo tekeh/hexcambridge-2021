@@ -44,8 +44,8 @@ class Sender():
       exit()
 
 class Receiver():
-  def __init__(self, port):
-    self.address = '127.0.0.1'
+  def __init__(self, address, port):
+    self.address = address
     self.port = port
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.type = 'receiver'
