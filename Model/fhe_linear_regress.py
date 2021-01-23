@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 def test():
     ## Make some fake data to regress to
     scale = 10**3
-    N = 10
+    N = 100
     beta_0 = 1
-    learning_rate = 0.05
+    learning_rate = 0.005
     learning_scale = np.sqrt(2*learning_rate/N)
-    x = np.arange(N, dtype=float)
-    y = learning_rate*(beta_0*x + np.random.normal(size=N, scale=0.8))
-    x = learning_rate*x
+    x = np.tile(np.arange(10, dtype=float), 10) #10*10=N=100
+    y = learning_scale*(beta_0*x + np.random.normal(size=N, scale=0.8))
+    x = learning_scale*x
     plt.scatter(x, y)
     plt.show()
     
@@ -34,19 +34,18 @@ def test():
     enc_x = ts.ckks_vector(context, x_list)
     enc_y = ts.ckks_vector(context, y_list)
 
-    lin_regressor = EncryptedLinReg(enc_x, enc_y, context, scale=10**3)
-    #lin_regressor = EncryptedLinReg(x, y, context)
+    #lin_regressor = EncryptedLinReg(enc_x, enc_y, context, scale=10**3)
+    lin_regressor = EncryptedLinReg(x, y, context)
     beta_g = lin_regressor.predict()
     return beta_g
 
 class EncryptedLinReg:
     ## FInds minima via gradient descent
-    def __init__(self, enc_x, enc_y, context, scale=1):
+    def __init__(self, enc_x, enc_y, context):
         ## Load the model 
-        self.N = 10
+        self.N = 100
         
         self.count = 0 ## Number of operations
-        self.scale = scale
         self.dbeta = np.zeros(self.N)
         self.beta = 0.5
         self.learning_rate = 0.1
@@ -66,7 +65,7 @@ class EncryptedLinReg:
 
     def calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
-        self.loss = self.err.dot(self.err)
+        #self.loss = self.err.dot(self.err)
 
 
     def predict(self):
@@ -90,10 +89,40 @@ class EncryptedLinReg:
 
                 print("BOOTSTRAP")
 
-            print(f"Beta, round {k}", self.beta.decrypt(), "Loss\t", self.loss.decrypt())
+            print(f"Beta, round {k}", self.beta)#, "Loss\t", self.loss.decrypt())
 
         
-            #print("Beta", self.beta, self.beta.decrypt(), self.dbeta.decrypt())
+            #print("Beta, round {k}", self.beta, self.dbeta, "Loss\t", self.loss)
 
 if __name__ == "__main__":
-    test()
+    scale = 10**3
+    N = 100
+    beta_0 = 1
+    learning_rate = 0.01
+    learning_scale = np.sqrt(2*learning_rate/N)
+    x = np.tile(np.arange(10, dtype=float), 10) #10*10=N=100
+    y = learning_scale*(beta_0*x + np.random.normal(size=N, scale=0.8))
+    x = learning_scale*x
+    plt.scatter(x, y)
+    plt.show()
+    
+    x_list = x.tolist()
+    y_list = y.tolist()
+
+    ## Encrypt
+    context = ts.context(
+            ts.SCHEME_TYPE.CKKS,
+            poly_modulus_degree = 8192,
+            coeff_mod_bit_sizes = [40, 21, 21, 21, 21, 21, 21, 40]
+          )
+
+    context.generate_galois_keys()
+    context.global_scale = 2**21
+
+    enc_x = ts.ckks_vector(context, x_list)
+    enc_y = ts.ckks_vector(context, y_list)
+
+    lin_regressor = EncryptedLinReg(enc_x, enc_y, context)
+    #lin_regressor = EncryptedLinReg(x, y, context)
+    beta_g = lin_regressor.predict()
+#    test()
