@@ -25,14 +25,12 @@ class Sender():
 
   def send(self, data_bin):
     packet_size = len(data_bin)
-    header = '{0}'.format(packet_size)
+    header = '{0}:'.format(packet_size)
     header = bytes(header.encode())
 
     out = bytearray()
     out += header
-    print("out1:", out)
     out += data_bin
-    print("out2:", out)
 
     try:
       self.socket.sendall(out)
@@ -65,7 +63,6 @@ class Receiver():
     while True:
       data = self.client_connection.recv(socket_buffer_size)
       frameBuffer += data
-      print(int(frameBuffer))
       if len(frameBuffer) == length:
         break
       while True:
@@ -75,7 +72,7 @@ class Receiver():
           # remove the length bytes from the front of frameBuffer
           # leave any remaining bytes in the frameBuffer!
           length_str, ignored, frameBuffer = frameBuffer.partition(b':') 
-          print(int(length_str))
+          #print(int(length_str))
           length = int(length_str)
           break
         if len(frameBuffer) < length:
