@@ -1,13 +1,13 @@
 import tenseal as ts
+import numpy as np
 
-class Context:  
+class DataOwner:
   def __init__(self, poly_mod_degree=4096, coeff_mod_bit_sizes=[40, 20, 40], global_scale=2**20):
     self.secret_context = ts.context(ts.SCHEME_TYPE.CKKS, poly_mod_degree, -1, coeff_mod_bit_sizes)
     self.secret_context.global_scale = global_scale
     self.secret_context.generate_galois_keys()
     self.public_context = self.secret_context.copy()
     self.public_context.make_context_public()
-    
     self.public_context_serial = self.public_context.serialize()
 
   def encrypt(self, data):
@@ -18,10 +18,24 @@ class Context:
       data.link_context(self.secret_context)
     return data.decrypt()
 
-  def send_package(self, encrypted_data):
+  def make_package(self, encrypted_data, filename):
     public_serial = self.public_context.serialize()
     data_serial = encrypted_data.serialize()
-    return [public_serial, data_serial]
+    with open('{}.bin'.format(filename), 'wb') as f:
+        f.write(data_serial)
+        f.close()
+    with open('public_key.bin', 'wb') as f:
+        f.write(public_serial)
+        f.close()
 
-  def receive_package(self, data_serial):
-    return CKKSVector.lazy_load(data_serial)
+class Computer:
+
+    def __init__(self):
+        with open('public_key.bin', 'rb') as f:
+            public_serial = f.read()
+        self.public_context = ts.context_from(public_serial)
+
+    def get_data(self, filename):
+        with open('{}.bin'.format(filename), 'rb') as f:
+            data_serial = f.read()
+        return ts.ckks_vector_from(self.public_context, data_serial)
