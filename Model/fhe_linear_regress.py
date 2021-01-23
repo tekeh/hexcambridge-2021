@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 def test():
     ## Make some fake data to regress to
+    scale = 10**3
     N = 10
     beta_0 = 1
     learning_rate = 0.05
@@ -16,48 +17,61 @@ def test():
     x = learning_rate*x
     plt.scatter(x, y)
     plt.show()
-
+    
     x_list = x.tolist()
     y_list = y.tolist()
+
     ## Encrypt
     context = ts.context(
             ts.SCHEME_TYPE.CKKS,
-            poly_modulus_degree=8192,
+            poly_modulus_degree = 8192,
             coeff_mod_bit_sizes = [40, 21, 21, 21, 21, 21, 21, 40]
           )
+
     context.generate_galois_keys()
     context.global_scale = 2**21
 
     enc_x = ts.ckks_vector(context, x_list)
     enc_y = ts.ckks_vector(context, y_list)
 
-    lin_regressor = EncryptedLinReg(enc_x, enc_y, context)
+    lin_regressor = EncryptedLinReg(enc_x, enc_y, context, scale=10**3)
     #lin_regressor = EncryptedLinReg(x, y, context)
     beta_g = lin_regressor.predict()
     return beta_g
 
 class EncryptedLinReg:
     ## FInds minima via gradient descent
-    def __init__(self, enc_x, enc_y, context):
-        ## Load the model
+    def __init__(self, enc_x, enc_y, context, scale=1):
+        ## Load the model 
         self.N = 10
-
+        
         self.count = 0 ## Number of operations
+        self.scale = scale
         self.dbeta = np.zeros(self.N)
-        self.beta = 0.05
+        self.beta = 0.5
         self.learning_rate = 0.1
         self.err = np.ones(self.N)
         self.enc_x = enc_x
         self.enc_y = enc_y
         self.context = context ## Shouldn't be in the final iteration - is just for testing the regression
 
+    def recalc_context(self):
+            self.context = ts.context(
+            ts.SCHEME_TYPE.CKKS,
+            poly_modulus_degree=8192,
+            coeff_mod_bit_sizes = [40, 21, 21, 21, 21, 21, 21, 40]
+          )
+            self.context.generate_galois_keys()
+            self.context.global_scale = 2**21
+
     def calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
-        #self.loss = self.err.dot(self.err)
+        self.loss = self.err.dot(self.err)
+
 
     def predict(self):
         ## Iterative procedure to get around lack of efficient inverses...
-        for _ in range(20): ## change with residual condition later
+        for k in range(100): ## change with residual condition later
             try:
                 self.calc_loss()
                 #print("Loss\t", self.loss)
@@ -66,13 +80,19 @@ class EncryptedLinReg:
                 #self.dbeta = (2*self.learning_rate/self.N) * enc_grad_loss
                 self.beta += self.dbeta
                 #print("Beta", self.beta, "Loss\t", self.loss)#, self.beta.decrypt(), self.dbeta.decrypt())
-                print("Beta", self.beta, self.beta.decrypt(), self.dbeta.decrypt())
             except:
                 ## Local bootstrap
+                self.recalc_context()
                 self.enc_x = ts.ckks_vector(self.context, self.enc_x.decrypt())
                 self.enc_y = ts.ckks_vector(self.context, self.enc_y.decrypt())
+                self.beta = ts.ckks_vector(self.context, self.beta.decrypt())
+                self.dbeta = 0
 
+                print("BOOTSTRAP")
 
+            print(f"Beta, round {k}", self.beta.decrypt(), "Loss\t", self.loss.decrypt())
+
+        
             #print("Beta", self.beta, self.beta.decrypt(), self.dbeta.decrypt())
 
 if __name__ == "__main__":
