@@ -1,7 +1,7 @@
 import p2p
 
-number = 123
-number_bin = bytes([number])
+number = -2566884
+number_bin = number.to_bytes(10, byteorder='little', signed=True)
 print(number_bin)
 
 sender = p2p.Sender('127.0.0.1', 8080)
