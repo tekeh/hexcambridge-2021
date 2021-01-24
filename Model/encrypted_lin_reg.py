@@ -14,6 +14,7 @@ class LocalOperations:
         self.flag_file = 'flag'
 
     def send(self, file_name):
+        time.sleep(0.1)
         sender = Sender(self.address, self.port)
         sender.send('{}.bin'.format(file_name))
         time.sleep(0.1)
