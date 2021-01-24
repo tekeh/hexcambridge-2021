@@ -9,6 +9,7 @@ def main(x=None,y=None, N=None):
     address = ''
     port=''
     N=10
+    beta_0 = 1
 
     x = np.arange(N, dtype=float)
     y = beta_0*x + np.random.normal(size=N, scale=0.8)
