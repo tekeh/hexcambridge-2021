@@ -155,17 +155,27 @@ ScreenManagement:
                 size: self.size
                 pos: self.pos
 
-	    Label:
-            text: 'You are a helpful bee!'
-            color: (0,0,0,1)
+        BoxLayout:
 
-        Button:
-            background_color: hex('#e67e22')
-            background_normal: ''
-            on_release: app.root.current = "main"
-            size: (20,50)
-            text: "Back"
-            font_size: 50
+    	    Label:
+                text: 'You are a helpful bee!'
+                color: (0,0,0,1)
+
+
+            Button:
+                background_color: hex('#27ae60')
+                background_normal: ''
+                size: (20,50)
+                text: "I am ready"
+                font_size: 50
+        BoxLayout:
+            Button:
+                background_color: hex('#e67e22')
+                background_normal: ''
+                on_release: app.root.current = "main"
+                size: (20,50)
+                text: "Back"
+                font_size: 50
 
 
 
