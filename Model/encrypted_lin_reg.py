@@ -55,6 +55,7 @@ class LocalOperations:
         print('sending data now')
         self.send('x_data')
         self.send('y_data')
+        self.send('public_key')
         print('finished sending')
 
     def _listen(self):
