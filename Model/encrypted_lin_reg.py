@@ -1,11 +1,12 @@
 import tenseal as ts
-from context import DataOwner, DataReceiver
+from users import DataOwner, DataReceiver
+from p2p import Sender, Receiver
 
 class LocalOperations:
 
-    def __init__(self, data_file, result_file, flag_file, p2p_sender, p2p_receiver):
-        self.p2p_sender = p2p_sender
-        self.p2p_receiver = p2p_receiver
+    def __init__(self, data_file, result_file, flag_file, address, port):
+        self.p2p_sender = Sender(address, port)
+        self.p2p_receiver = Receiver(address, port)
         self.data_file = data_file
         self.result_file = result_file
         self.flag_file = flag_file
@@ -42,12 +43,12 @@ class LocalOperations:
 
 class EncryptedOperations:
 
-    def __init__(self, data_file, result_file, flag_file, p2p_sender, p2p_receiver):
+    def __init__(self, data_file, result_file, flag_file, address, port):
         self.data_file = data_file
         self.result_file = result_file
         self.flag_file = flag_file
-        self.p2p_sender = p2p_sender
-        self.p2p_receiver = p2p_receiver
+        self.p2p_sender = Sender(address, port)
+        self.p2p_receiver = Receiver(address, port)
 
     def _get_data(self):
         receiver = DataReceiver()
@@ -64,8 +65,8 @@ class EncryptedOperations:
 
 class EncryptedLinReg(EncryptedOperations):
     ## FInds minima via gradient descent
-    def __init__(self, data_file, result_file, p2p_node):
-        super().__init__(data_file, result_file, p2p_node)
+    def __init__(self, data_file, result_file, flag_file, address, port):
+        super().__init__(data_file, result_file, flag_file, address, port)
         # regression specific params
         self.count = 0 ## Number of operations
         self.beta = 0.5
