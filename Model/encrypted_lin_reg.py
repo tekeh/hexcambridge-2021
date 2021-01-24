@@ -3,6 +3,8 @@ import time
 from Model.users import DataOwner, DataReceiver
 from Model.p2p import Sender, Receiver
 import numpy as np
+import socket
+
 
 class LocalOperations:
 
@@ -12,7 +14,15 @@ class LocalOperations:
         self.owner = DataOwner()
         self.result_file = 'result'
         self.flag_file = 'flag'
+        self.my_address = self.get_my_address()
 
+    def get_my_address(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        addr = s.getsockname()[0]
+        s.close()
+        return addr
+        
     def send(self, file_name):
         time.sleep(0.5)
         sender = Sender(self.address, self.port)
@@ -20,7 +30,7 @@ class LocalOperations:
         time.sleep(0.5)
 
     def receive(self, file_name):
-        receiver = Receiver(self.address, self.port)
+        receiver = Receiver(self.my_address, self.port)
         receiver.receive('{}.bin'.format(file_name))
 
     def process(self, x, y):
