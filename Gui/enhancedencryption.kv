@@ -11,6 +11,7 @@ ScreenManagement:
 	MainScreen:
 	OwnerScreen:
     ReceiverScreen:
+    DisplayScreen:
 
 <MainScreen>:
 	name: "main"
@@ -123,14 +124,15 @@ ScreenManagement:
 
         BoxLayout:
             Label:
-                text: 'Result'
+                text: 'Display data'
                 color: (0,0,0,1)
+
         BoxLayout:
             Button:
                 background_color: hex('#27ae60')
                 background_normal: ''
+                on_release: app.root.current = "display"
                 color: 1,1,1,1
-                text: root.beta_result
 
         BoxLayout:
             Button:
@@ -138,9 +140,14 @@ ScreenManagement:
         		text: "Back"
         		font_size: 50
 
+<DisplayScreen>:
+    name: "display"
+
+    Image:
+        source: 'result.png'
 
 
-<ReceiverScreen>
+<ReceiverScreen>:
     name: "receiver"
 
     GridLayout:
