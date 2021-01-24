@@ -5,6 +5,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.textinput import TextInput
+import ../Model/
 
 import os
 
@@ -15,7 +16,7 @@ class LoadDialog(FloatLayout):
 
 class SaveDialog(FloatLayout):
     save = ObjectProperty(None)
-    text_input = ObjectProperty(None)
+    data_input = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
 
@@ -23,6 +24,8 @@ class Root(FloatLayout):
     loadfile = ObjectProperty(None)
     savefile = ObjectProperty(None)
     text_input = ObjectProperty(None)
+    plain_x_dat = ObjectProperty(None)
+    plain_y_dat = ObjectProperty(None)
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -41,7 +44,9 @@ class Root(FloatLayout):
 
     def load(self, path, filename):
         with open(os.path.join(path, filename[0])) as stream:
-            self.text_input.text = stream.read()
+            self.data_input = np.loadtxt(filename)
+            self.plain_x_dat = self.data_input[0]
+            self.plain_y_dat = self.data_input[1]
 
         self.dismiss_popup()
 
