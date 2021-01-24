@@ -1,0 +1,6 @@
+kivy
+sockets
+p2p
+tenseal
+numpy
+matplotlib
