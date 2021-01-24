@@ -7,6 +7,11 @@ from kivy.uix.progressbar import ProgressBar
 from kivy.uix.textinput import TextInput
 import numpy as np
 
+import sys
+sys.path.append('/home/res0lve/research/hexcambridge-2021/Model')
+import local_run as chive
+
+
 import os
 
 class LoadDialog(FloatLayout):
@@ -49,9 +54,12 @@ class Root(FloatLayout):
         self.data_input = np.loadtxt(filename[0], delimiter=",")
         self.plain_x_dat = self.data_input[0]
         self.plain_y_dat = self.data_input[1]
-        print(self.data_input)
+        chive.main(x=self.plain_x_dat, y=self.plain_y_dat)
 
         self.dismiss_popup()
+
+    def encrypt_and_compute(self):
+        chive.main(x=self.plain_x_dat, y=self.plain_y_dat)
 
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:

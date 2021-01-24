@@ -41,19 +41,6 @@ Root:
                 text: 'Load...'
                 on_release: root.show_load()
 
-        BoxLayout:
-            Label:
-                text: 'Public key'
-                color: (0,0,0,1)
-        BoxLayout:
-            TextInput:
-                id: publickey_input
-                #background_color: hex('#eeeeee')
-                background_normal: ''
-                padding: [20,self.height / 2.0 - (self.line_height / 2.0) * len(self._lines)]
-                text: 'my_public_key'
-                on_text: root.process_publickey()
-
 
         BoxLayout:
             Label:
@@ -65,34 +52,8 @@ Root:
                 background_normal: ''
                 color: 1,1,1,1
                 text: 'Encrypt!'
-                on_press: print("\n")
-                on_release: print("\n")
-
-        BoxLayout:
-            Label:
-                text: 'Worker'
-                color: (0,0,0,1)
-        BoxLayout:
-            Button:
-                background_color: hex('#eeeeee')
-                background_normal: ''
-                color: 0,0,0,1
-                text: 'Find a faster PC'
-                on_press: print("\n")
-                on_release: print("\n")
-
-        BoxLayout:
-            Label:
-                text: 'Submit file'
-                color: (0,0,0,1)
-        BoxLayout:
-            Button:
-                background_color: hex('#eeeeee')
-                background_normal: ''
-                color: 0,0,0,1
-                text: 'Send encrypted data'
-                on_press: print("\n")
-                on_release: print("\n")
+                #on_press: 
+                on_release: root.encrypt_and_compute()
 
 
         BoxLayout:
@@ -106,16 +67,14 @@ Root:
 
         BoxLayout:
             Label:
-                text: 'Decryption'
+                text: 'Result'
                 color: (0,0,0,1)
         BoxLayout:
             Button:
                 background_color: hex('#27ae60')
                 background_normal: ''
                 color: 1,1,1,1
-                text: 'Decrypt!'
-                on_press: print("\n")
-                on_release: print("\n")
+                text: '-'
 
 <LoadDialog>:
     BoxLayout:
