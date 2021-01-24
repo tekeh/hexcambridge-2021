@@ -23,7 +23,12 @@ class Sender():
     self.socket.shutdown(1)
     self.socket.close()
 
-  def send(self, data_bin):
+  def send(self, file_name):
+    self.open()
+
+    with open(file_name, 'rb') as f:
+      data_bin = f.read()
+
     packet_size = len(data_bin)
     header = '{0}:'.format(packet_size)
     header = bytes(header.encode())
@@ -34,12 +39,13 @@ class Sender():
 
     try:
       self.socket.sendall(out)
+      self.close()
     except Exception:
       exit()
 
 class Receiver():
-  def __init__(self, port):
-    self.address = '127.0.0.1'
+  def __init__(self, address, port):
+    self.address = address
     self.port = port
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.type = 'receiver'
@@ -57,7 +63,9 @@ class Receiver():
     self.client_connection.shutdown(1)
     self.client_connection.close()
         
-  def receive(self, socket_buffer_size=1024):
+  def receive(self, file_name, socket_buffer_size=1024):
+    self.open()
+
     length = None
     frameBuffer = bytearray()
     while True:
@@ -81,4 +89,8 @@ class Receiver():
         # leave any remaining bytes in the frameBuffer!
         frameBuffer = frameBuffer[length:]
         break
-    return frameBuffer
+    with open(file_name, 'wb') as f:
+      f.write(frameBuffer)
+      f.close()
+
+    self.close()
