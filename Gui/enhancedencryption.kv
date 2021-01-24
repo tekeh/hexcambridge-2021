@@ -17,19 +17,18 @@ Root:
                 size: self.size
                 pos: self.pos
 
-        BoxLayout:
-            Label:
-                text:'C-Hive'
-                color: hex('#8e44ad')
-                font_size:30
+    	BoxLayout:
+            padding: 0,0
+    		Image:
+    			source: 'c-hive-logo.png'
 
-	FloatLayout:
-		Image:
-			source: 'c-hive-logo.png'
-	
-        BoxLayout:
             Label:
-                font_size:30
+                text:'cHive'
+                color: hex('#8e44ad')
+                font_size:50
+
+        BoxLayout:
+
 
         BoxLayout:
             Label:
@@ -55,7 +54,7 @@ Root:
                 background_normal: ''
                 color: 1,1,1,1
                 text: 'Encrypt!'
-                #on_press: 
+                #on_press:
                 on_release: root.encrypt_and_compute()
 
 
