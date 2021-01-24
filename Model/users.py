@@ -2,7 +2,7 @@ import tenseal as ts
 import numpy as np
 
 class DataOwner:
-  def __init__(self, poly_mod_degree=4096, coeff_mod_bit_sizes=[40, 20, 40], global_scale=2**20):
+  def __init__(self, poly_mod_degree=8192*2, coeff_mod_bit_sizes=[60, 40, 40, 40, 40, 40, 40, 60], global_scale=2**40):
     self.secret_context = ts.context(ts.SCHEME_TYPE.CKKS, poly_mod_degree, -1, coeff_mod_bit_sizes)
     self.secret_context.global_scale = global_scale
     self.secret_context.generate_galois_keys()
