@@ -36,7 +36,7 @@ class LocalOperations:
     def _resend(self, data, dec_result):
         enc_res = self.owner.encrypt(dec_result)
         self.owner.package_result(enc_res, self.result_file)
-        self.p2p_sender.send(self.data_file)
+        self.p2p_sender.send(self.result_file)
 
 
 
