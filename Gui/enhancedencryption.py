@@ -5,7 +5,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.textinput import TextInput
-import ../Model/
+import numpy as np
 
 import os
 
@@ -43,10 +43,13 @@ class Root(FloatLayout):
         self._popup.open()
 
     def load(self, path, filename):
-        with open(os.path.join(path, filename[0])) as stream:
-            self.data_input = np.loadtxt(filename)
-            self.plain_x_dat = self.data_input[0]
-            self.plain_y_dat = self.data_input[1]
+        #'with open(os.path.join(path, filename[0])) as stream:
+            #self.data_input = stream.read()
+            #np.genfromtxt(
+        self.data_input = np.loadtxt(filename[0], delimiter=",")
+        self.plain_x_dat = self.data_input[0]
+        self.plain_y_dat = self.data_input[1]
+        print(self.data_input)
 
         self.dismiss_popup()
 
