@@ -1,0 +1,165 @@
+#:kivy 1.1.0
+
+# Colors taken from https://flatuicolors.com/palette/defo
+
+#:import hex kivy.utils.get_color_from_hex
+Root:
+
+    GridLayout:
+        spacing: (40,40)
+        padding: (60,20)
+        rows: 9
+        cols: 2
+        canvas:
+            Color:
+                rgba: 256,256,256,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        BoxLayout:
+            Label:
+                text:'EnhancedEncryption'
+                color: hex('#8e44ad')
+                font_size:50
+        BoxLayout:
+            Label:
+                text:'#CommunistCryptography'
+                color: hex('#cccccc')
+                font_size:30
+
+        BoxLayout:
+            Label:
+                text: 'Input data'
+                color: (0,0,0,1)
+        BoxLayout:
+            Button:
+                size: (20,50)
+                background_color: hex('#eeeeee')
+                background_normal: ''
+                color: 0,0,0,1
+                text: 'Load...'
+                on_release: root.show_load()
+
+        BoxLayout:
+            Label:
+                text: 'Public key'
+                color: (0,0,0,1)
+        BoxLayout:
+            TextInput:
+                id: publickey_input
+                #background_color: hex('#eeeeee')
+                background_normal: ''
+                padding: [20,self.height / 2.0 - (self.line_height / 2.0) * len(self._lines)]
+                text: 'my_public_key'
+                on_text: root.process_publickey()
+
+
+        BoxLayout:
+            Label:
+                text: 'Encryption'
+                color: (0,0,0,1)
+        BoxLayout:
+            Button:
+                background_color: hex('#e67e22')
+                background_normal: ''
+                color: 1,1,1,1
+                text: 'Encrypt!'
+                on_press: print("\n")
+                on_release: print("\n")
+
+        BoxLayout:
+            Label:
+                text: 'Worker'
+                color: (0,0,0,1)
+        BoxLayout:
+            Button:
+                background_color: hex('#eeeeee')
+                background_normal: ''
+                color: 0,0,0,1
+                text: 'Find a faster PC'
+                on_press: print("\n")
+                on_release: print("\n")
+
+        BoxLayout:
+            Label:
+                text: 'Submit file'
+                color: (0,0,0,1)
+        BoxLayout:
+            Button:
+                background_color: hex('#eeeeee')
+                background_normal: ''
+                color: 0,0,0,1
+                text: 'Send encrypted data'
+                on_press: print("\n")
+                on_release: print("\n")
+
+
+        BoxLayout:
+            Label:
+                text: 'Status'
+                color: (0,0,0,1)
+        BoxLayout:
+            Label:
+                text: 'something showing status'
+                color: (0,0,0,1)
+
+        BoxLayout:
+            Label:
+                text: 'Decryption'
+                color: (0,0,0,1)
+        BoxLayout:
+            Button:
+                background_color: hex('#27ae60')
+                background_normal: ''
+                color: 1,1,1,1
+                text: 'Decrypt!'
+                on_press: print("\n")
+                on_release: print("\n")
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+        # FileChooserIconView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save(filechooser.path, text_input.text)
