@@ -3,7 +3,61 @@
 # Colors taken from https://flatuicolors.com/palette/defo
 
 #:import hex kivy.utils.get_color_from_hex
-Root:
+
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManagement:
+	transition: FadeTransition()
+	MainScreen:
+	OwnerScreen:
+    ReceiverScreen:
+
+<MainScreen>:
+	name: "main"
+
+    GridLayout:
+        spacing: (40,200)
+        padding: (60,20)
+        rows: 3
+        cols: 2
+        canvas:
+            Color:
+                rgba: 256,256,256,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        BoxLayout:
+            padding: 0,0
+    		Image:
+    			source: 'c-hive-logo.png'
+
+            Label:
+                text:'cHive'
+                color: hex('#8e44ad')
+                font_size:50
+
+        BoxLayout:
+
+
+        BoxLayout:
+        	Button:
+                background_color: hex('#e67e22')
+                background_normal: ''
+        		on_release: app.root.current = "owner"
+        		text: "I have data"
+        		font_size: 50
+
+        BoxLayout:
+            Button:
+                background_color: hex('#e67e22')
+                background_normal: ''
+                on_release: app.root.current = "receiver"
+                text: "Happy to help"
+                font_size: 50
+
+<OwnerScreen>:
+    name: "owner"
 
     GridLayout:
         spacing: (40,40)
@@ -77,6 +131,43 @@ Root:
                 background_normal: ''
                 color: 1,1,1,1
                 text: '-'
+
+        BoxLayout:
+            Button:
+                on_release: app.root.current = "main"
+        		text: "Back"
+        		font_size: 50
+
+
+
+<ReceiverScreen>
+    name: "receiver"
+
+    GridLayout:
+        spacing: (60,60)
+        padding: (200,200)
+        rows: 2
+        cols: 1
+        canvas:
+            Color:
+                rgba: 256,256,256,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+	    Label:
+            text: 'You are a helpful bee!'
+            color: (0,0,0,1)
+
+        Button:
+            background_color: hex('#e67e22')
+            background_normal: ''
+            on_release: app.root.current = "main"
+            size: (20,50)
+            text: "Back"
+            font_size: 50
+
+
 
 <LoadDialog>:
     BoxLayout:

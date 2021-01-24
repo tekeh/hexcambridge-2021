@@ -3,8 +3,10 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
-from kivy.uix.progressbar import ProgressBar
 from kivy.uix.textinput import TextInput
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
+from kivy.lang import Builder
+
 import numpy as np
 
 import sys
@@ -25,7 +27,17 @@ class SaveDialog(FloatLayout):
     cancel = ObjectProperty(None)
 
 
-class Root(FloatLayout):
+class MainScreen(Screen):
+    pass
+
+class ReceiverScreen(Screen):
+    pass
+
+class ScreenManagement(ScreenManager):
+    pass
+
+
+class OwnerScreen(Screen):
     loadfile = ObjectProperty(None)
     savefile = ObjectProperty(None)
     text_input = ObjectProperty(None)
@@ -75,11 +87,15 @@ class Root(FloatLayout):
         text_input = self.ids.publickey_input.text
         print(text_input)
 
+presentation = Builder.load_file("enhancedencryption.kv")
+
 class EnhancedEncryption(App):
-    pass
+
+    def build(self):
+        return presentation
 
 
-Factory.register('Root', cls=Root)
+Factory.register('OwnerScreen', cls=OwnerScreen)
 Factory.register('LoadDialog', cls=LoadDialog)
 Factory.register('SaveDialog', cls=SaveDialog)
 
