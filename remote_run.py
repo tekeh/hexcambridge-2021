@@ -3,8 +3,12 @@ import tenseal as ts
 import numpy as np
 
 
-address = '127.0.0.1'
-port = 8080
+def main():
+    address = '192.168.0.12'
+    port = 8080
 
-remote_ops = EncryptedLinReg(address, port)
-remote_ops.predict()
+    remote_ops = EncryptedLinReg(address, port)
+    remote_ops.predict()
+
+if __name__=="__main__":
+    main()
