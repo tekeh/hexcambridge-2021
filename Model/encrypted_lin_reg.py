@@ -24,14 +24,15 @@ class LocalOperations:
         return addr
 
     def send(self, file_name):
-        time.sleep(0.5)
+        time.sleep(1.0)
         sender = Sender(self.address, self.port)
         sender.send('{}.bin'.format(file_name))
-        time.sleep(0.5)
+        time.sleep(1.0)
 
     def receive(self, file_name):
         receiver = Receiver(self.my_address, self.port)
         receiver.receive('{}.bin'.format(file_name))
+        time.sleep(0.5)
 
     def process(self, x, y):
         flag = False
@@ -86,14 +87,15 @@ class EncryptedOperations:
         return addr
 
     def send(self, file_name):
-        time.sleep(0.5)
+        time.sleep(1.0)
         sender = Sender(self.address, self.port)
         sender.send('{}.bin'.format(file_name))
-        time.sleep(0.5)
+        time.sleep(1.0)
 
     def receive(self, file_name):
         receiver = Receiver(self.my_address, self.port)
         receiver.receive('{}.bin'.format(file_name))
+        time.sleep(0.5)
 
     def _get_data(self):
         receiver = DataReceiver()
@@ -116,7 +118,7 @@ class EncryptedLinReg(EncryptedOperations):
         self.count = 0 ## Number of operations
         self.beta = 0.5
         self.dbeta = 0
-        self.learning_rate = 0.1
+        self.learning_rate = 0.01
 
     def _calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
@@ -124,7 +126,9 @@ class EncryptedLinReg(EncryptedOperations):
     def predict(self):
         ## Iterative procedure to get around lack of efficient inverses...
         self.receive('x_data')
+        time.sleep(0.1)
         self.receive('y_data')
+        time.sleep(0.1)
         print('data received')
         self.enc_x, self.enc_y = self._get_data()
         self.copy_enc_x = self.enc_x.copy()
