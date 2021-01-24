@@ -24,20 +24,18 @@ class LocalOperations:
 
     def _start(self, data):
         enc_data = self.owner.encrypt(data)
-        self.owner.make_package(enc_data, self.data_file)
+        self.owner.package_data(enc_data, self.data_file)
         self.p2p_sender.send(self.data_file)
 
     def _listen(self):
-        self.p2p_receiver.receive()
+        self.p2p_receiver.receive(self.result_file)
+        self.p2p_receiver.receive(self.flag_file)
         flag, result = self.owner.receive_results(self.result_file, self.flag_file)
         return flag, result
 
     def _resend(self, data, dec_result):
-        self.owner = DataOwner() # refresh context
-        enc_data = self.owner.encrypt(data)
         enc_res = self.owner.encrypt(dec_result)
-        self.owner.make_package(enc_data, self.data_file, enc_res, self.result_file)
-        self.p2p_sender.send(self.data_file)
+        self.owner.package_result(enc_res, self.result_file)
         self.p2p_sender.send(self.result_file)
 
 
@@ -53,13 +51,12 @@ class EncryptedOperations:
 
     def _get_data(self):
         receiver = DataReceiver()
-        return receiver.get_data(self.data_file)
+        return receiver.unpack(self.data_file)
 
-    def _get_data_and_results(self):
+    def _get_results(self):
         receiver = DataReceiver()
-        data = receiver.unpack(self.data_file)
         result = receiver.unpack(self.result_file)
-        return data, result
+        return result
 
     def _pack(self, result, flag):
         receiver = DataReceiver()
@@ -69,21 +66,20 @@ class EncryptedLinReg(EncryptedOperations):
     ## FInds minima via gradient descent
     def __init__(self, data_file, result_file, p2p_node):
         super().__init__(data_file, result_file, p2p_node)
-
         # regression specific params
         self.count = 0 ## Number of operations
         self.beta = 0.5
         self.dbeta = 0
         self.learning_rate = 0.1
-        self.enc_x, self.enc_y = self._get_data()
-        self.err = np.empty(self.enc_x.size())
 
     def _calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
 
     def predict(self):
-        self.receiver.receive()
         ## Iterative procedure to get around lack of efficient inverses...
+        self.p2p_receiver.receive(self.data_file)
+        self.enc_x, self.enc_y = self._get_data()
+        self.err = np.empty(self.enc_x.size())
         for k in range(100): ## change with residual condition later
             try:
                 self._calc_loss()
@@ -98,9 +94,7 @@ class EncryptedLinReg(EncryptedOperations):
                 self._pack(self.beta, False)
                 self.p2p_sender.send(self.result_file)
                 self.p2p_sender.send(self.flag_file)
-                self.p2p_receiver.receive()
-                data, self.beta = self._get_data_and_results()
-                self.enc_x, self.enc_y = data
+                self.p2p_receiver.receive(self.result_file)
                 self.dbeta = 0
 
                 print("BOOTSTRAP")
