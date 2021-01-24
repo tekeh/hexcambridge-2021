@@ -6,6 +6,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.lang import Builder
+from kivy.properties import StringProperty
 
 import numpy as np
 
@@ -44,6 +45,7 @@ class OwnerScreen(Screen):
     text_input = ObjectProperty(None)
     plain_x_dat = ObjectProperty(None)
     plain_y_dat = ObjectProperty(None)
+    beta_result = StringProperty()
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -71,8 +73,8 @@ class OwnerScreen(Screen):
         self.dismiss_popup()
 
     def encrypt_and_compute(self):
-        local_run(x=self.plain_x_dat, y=self.plain_y_dat)
-
+        beta = local_run(x=self.plain_x_dat, y=self.plain_y_dat)
+        beta_result = f"{beta}"
 
 
     def save(self, path, filename):
