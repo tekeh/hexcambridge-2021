@@ -31,6 +31,10 @@ class SaveDialog(FloatLayout):
 class MainScreen(Screen):
     pass
 
+class DisplayScreen(Screen):
+    pass
+
+
 class ReceiverScreen(Screen):
     def listen(self):
         remote_run()
@@ -75,7 +79,7 @@ class OwnerScreen(Screen):
     def encrypt_and_compute(self):
         beta_result = "Working..."
         beta = local_run(x=self.plain_x_dat, y=self.plain_y_dat)
-        beta_result = f"{beta}"
+
 
 
     def save(self, path, filename):
