@@ -10,8 +10,9 @@ from kivy.lang import Builder
 import numpy as np
 
 import sys
-# sys.path.append('/home/res0lve/research/hexcambridge-2021/Model')
-# import local_run as chive
+sys.path.append('./../')
+from local_run import main as local_run
+from remote_run import main as remote_run
 
 
 import os
@@ -25,7 +26,6 @@ class SaveDialog(FloatLayout):
     save = ObjectProperty(None)
     data_input = ObjectProperty(None)
     cancel = ObjectProperty(None)
-
 
 class MainScreen(Screen):
     pass
@@ -70,8 +70,10 @@ class OwnerScreen(Screen):
         self.dismiss_popup()
 
     def encrypt_and_compute(self):
-        # chive.main(x=self.plain_x_dat, y=self.plain_y_dat)
-        pass
+        local_run(x=self.plain_x_dat, y=self.plain_y_dat)
+
+    def listen(self):
+        remote_run()
 
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
