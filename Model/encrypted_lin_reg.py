@@ -16,11 +16,11 @@ class LocalOperations:
     def send(self, file_name):
         sender = Sender(self.address, self.port)
         sender.send('{}.bin'.format(file_name))
-        time.sleep(0.001)
+        time.sleep(0.1)
 
     def receive(self, file_name):
         receiver = Receiver(self.address, self.port)
-        receiver.receive(file_name)
+        receiver.receive('{}.bin'.format(file_name))
 
     def process(self, x, y):
         flag = False
@@ -35,11 +35,12 @@ class LocalOperations:
                 self._resend(dec_result)
 
     def _start(self, x, y):
-        print('sending data now')
+        print('packaging data..')
         enc_x = self.owner.encrypt(x)
         enc_y = self.owner.encrypt(y)
         self.owner.package_data(enc_x, 'x_data')
         self.owner.package_data(enc_y, 'y_data')
+        print('sending data now')
         self.send('x_data')
         self.send('y_data')
         print('finished sending')
@@ -67,12 +68,12 @@ class EncryptedOperations:
 
     def send(self, file_name):
         sender = Sender(self.address, self.port)
-        sender.send(file_name)
-        time.sleep(0.001)
+        sender.send('{}.bin'.format(file_name))
+        time.sleep(0.1)
 
     def receive(self, file_name):
         receiver = Receiver(self.address, self.port)
-        receiver.receive(file_name)
+        receiver.receive('{}.bin'.format(file_name))
 
     def _get_data(self):
         receiver = DataReceiver()
