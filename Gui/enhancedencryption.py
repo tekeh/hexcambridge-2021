@@ -54,7 +54,6 @@ class Root(FloatLayout):
         self.data_input = np.loadtxt(filename[0], delimiter=",")
         self.plain_x_dat = self.data_input[0]
         self.plain_y_dat = self.data_input[1]
-        chive.main(x=self.plain_x_dat, y=self.plain_y_dat)
 
         self.dismiss_popup()
 
