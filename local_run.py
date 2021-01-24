@@ -12,13 +12,13 @@ import numpy as np
 
 N = 100
 beta_0 = 1
-learning_rate = 0.005
+learning_rate = 0.01
 learning_scale = np.sqrt(2*learning_rate/N)
 x = np.tile(np.arange(10, dtype=float), 10) #10*10=N=100
 y = learning_scale*(beta_0*x + np.random.normal(size=N, scale=0.8))
 x = learning_scale*x
-plt.scatter(x, y)
-plt.show()
+#plt.scatter(x, y)
+#plt.show()
 
 #address = '127.0.0.1'
 address = '192.168.0.12'
