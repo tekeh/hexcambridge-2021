@@ -34,7 +34,7 @@
                                                                                    
 # Funtionality
 
-This app is supposed to allow users send other users data homomorphically encrytped using tenseal and have them do operations on this encrypted data. Then the results are sent back without the users ever seeing the unencrypted data.
+This app is supposed to allow users send other users data that is homomorphically encrytped by tenseal with the public key and have them do operations on this encrypted data. Then the results are sent back without the users ever seeing the unencrypted data.
 
 The current functionaility is for linear regression on local area networks.
 
