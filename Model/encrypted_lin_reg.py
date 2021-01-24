@@ -130,6 +130,8 @@ class EncryptedLinReg(EncryptedOperations):
         time.sleep(0.1)
         self.receive('y_data')
         time.sleep(0.1)
+        self.receive('public_key')
+        time.sleep(0.1)
         print('data received')
         self.enc_x, self.enc_y = self._get_data()
         self.copy_enc_x = self.enc_x.copy()
