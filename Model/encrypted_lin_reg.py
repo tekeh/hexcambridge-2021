@@ -22,7 +22,7 @@ class LocalOperations:
         addr = s.getsockname()[0]
         s.close()
         return addr
-        
+
     def send(self, file_name):
         time.sleep(0.5)
         sender = Sender(self.address, self.port)
@@ -75,7 +75,15 @@ class EncryptedOperations:
         self.result_file = 'result'
         self.flag_file = 'flag'
         self.address = address
+        self.my_address = self.get_my_address()
         self.port = port
+
+    def get_my_address(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        addr = s.getsockname()[0]
+        s.close()
+        return addr
 
     def send(self, file_name):
         time.sleep(0.5)
@@ -84,7 +92,7 @@ class EncryptedOperations:
         time.sleep(0.5)
 
     def receive(self, file_name):
-        receiver = Receiver(self.address, self.port)
+        receiver = Receiver(self.my_address, self.port)
         receiver.receive('{}.bin'.format(file_name))
 
     def _get_data(self):
