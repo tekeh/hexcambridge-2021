@@ -77,7 +77,7 @@ class EncryptedLinReg(EncryptedOperations):
 
     def predict(self):
         ## Iterative procedure to get around lack of efficient inverses...
-        self.p2p_receiver.receive()
+        self.p2p_receiver.receive(self.data_file)
         self.enc_x, self.enc_y = self._get_data()
         self.err = np.empty(self.enc_x.size())
         for k in range(100): ## change with residual condition later
