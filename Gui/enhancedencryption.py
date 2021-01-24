@@ -31,7 +31,8 @@ class MainScreen(Screen):
     pass
 
 class ReceiverScreen(Screen):
-    pass
+    def listen(self):
+        remote_run()
 
 class ScreenManagement(ScreenManager):
     pass
@@ -72,8 +73,7 @@ class OwnerScreen(Screen):
     def encrypt_and_compute(self):
         local_run(x=self.plain_x_dat, y=self.plain_y_dat)
 
-    def listen(self):
-        remote_run()
+
 
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
