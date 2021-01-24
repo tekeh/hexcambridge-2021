@@ -123,6 +123,7 @@ class EncryptedLinReg(EncryptedOperations):
                 self.send(self.flag_file)
                 print('finished sending, receiving now')
                 self.receive(self.result_file)
+                self.beta = self._get_results()
                 self.dbeta = 0
 
         self._pack(self.beta, True)
