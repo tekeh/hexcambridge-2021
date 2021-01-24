@@ -109,6 +109,8 @@ class EncryptedLinReg(EncryptedOperations):
         self.receive('y_data')
         print('data received')
         self.enc_x, self.enc_y = self._get_data()
+        self.copy_enc_x = self.enc_x.copy()
+        self.copy_enc_y = self.enc_y.copy()
         self.err = np.empty(self.enc_x.size())
         for k in range(100): ## change with residual condition later
             try:
@@ -127,6 +129,9 @@ class EncryptedLinReg(EncryptedOperations):
                 self.receive(self.result_file)
                 self.beta = self._get_results()
                 self.dbeta = 0
+                self.enc_x = self.copy_enc_x.copy()
+                self.enc_y = self.copy_enc_y.copy()
+
 
         self._pack(self.beta, True)
         self.send(self.result_file)
