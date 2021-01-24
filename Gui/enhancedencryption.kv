@@ -165,7 +165,8 @@ ScreenManagement:
                 background_normal: ''
                 size: (20,50)
                 text: "I am ready"
-                font_size: 50
+                on_release: root.listen()
+                font_size: 40
         BoxLayout:
             Button:
                 background_color: hex('#e67e22')
@@ -185,6 +186,7 @@ ScreenManagement:
         FileChooserListView:
         # FileChooserIconView:
             id: filechooser
+            path: './'
 
         BoxLayout:
             size_hint_y: None
