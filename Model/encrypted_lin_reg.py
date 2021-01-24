@@ -130,12 +130,14 @@ class EncryptedLinReg(EncryptedOperations):
         self.copy_enc_x = self.enc_x.copy()
         self.copy_enc_y = self.enc_y.copy()
         self.err = np.empty(self.enc_x.size())
-        for k in range(100): ## change with residual condition later
+        k = 0
+        while k < 10: ## change with residual condition later
             try:
                 self._calc_loss()
                 self.dbeta = self.err.dot(self.enc_x)
                 self.beta += self.dbeta
                 print(k)
+                k += 1
             except Exception as e:
                 print(e)
                 ## Local bootstrap
