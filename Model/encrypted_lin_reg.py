@@ -1,11 +1,12 @@
 import tenseal as ts
-from context import DataOwner, DataReceiver
+from users import DataOwner, DataReceiver
+from p2p import Sender, Receiver
 
 class LocalOperations:
 
-    def __init__(self, data_file, result_file, flag_file, p2p_sender, p2p_receiver):
-        self.p2p_sender = p2p_sender
-        self.p2p_receiver = p2p_receiver
+    def __init__(self, data_file, result_file, flag_file, address, port):
+        self.p2p_sender = Sender(address, port)
+        self.p2p_receiver = Receiver(address, port)
         self.data_file = data_file
         self.result_file = result_file
         self.flag_file = flag_file
@@ -24,7 +25,7 @@ class LocalOperations:
 
     def _start(self, data):
         enc_data = self.owner.encrypt(data)
-        self.owner.make_package(enc_data, self.data_file)
+        self.owner.package_data(enc_data, self.data_file)
         self.p2p_sender.send(self.data_file)
 
     def _listen(self):
@@ -34,33 +35,29 @@ class LocalOperations:
         return flag, result
 
     def _resend(self, data, dec_result):
-        self.owner = DataOwner() # refresh context
-        enc_data = self.owner.encrypt(data)
         enc_res = self.owner.encrypt(dec_result)
-        self.owner.make_package(enc_data, self.data_file, enc_res, self.result_file)
-        self.p2p_sender.send(self.data_file)
+        self.owner.package_result(enc_res, self.result_file)
         self.p2p_sender.send(self.result_file)
 
 
 
 class EncryptedOperations:
 
-    def __init__(self, data_file, result_file, flag_file, p2p_sender, p2p_receiver):
+    def __init__(self, data_file, result_file, flag_file, address, port):
         self.data_file = data_file
         self.result_file = result_file
         self.flag_file = flag_file
-        self.p2p_sender = p2p_sender
-        self.p2p_receiver = p2p_receiver
+        self.p2p_sender = Sender(address, port)
+        self.p2p_receiver = Receiver(address, port)
 
     def _get_data(self):
         receiver = DataReceiver()
-        return receiver.get_data(self.data_file)
+        return receiver.unpack(self.data_file)
 
-    def _get_data_and_results(self):
+    def _get_results(self):
         receiver = DataReceiver()
-        data = receiver.unpack(self.data_file)
         result = receiver.unpack(self.result_file)
-        return data, result
+        return result
 
     def _pack(self, result, flag):
         receiver = DataReceiver()
@@ -68,24 +65,22 @@ class EncryptedOperations:
 
 class EncryptedLinReg(EncryptedOperations):
     ## FInds minima via gradient descent
-    def __init__(self, data_file, result_file, p2p_node):
-        super().__init__(data_file, result_file, p2p_node)
-
-        self.p2p_receiver.receive(self.data_file)
-
+    def __init__(self, data_file, result_file, flag_file, address, port):
+        super().__init__(data_file, result_file, flag_file, address, port)
         # regression specific params
         self.count = 0 ## Number of operations
         self.beta = 0.5
         self.dbeta = 0
         self.learning_rate = 0.1
-        self.enc_x, self.enc_y = self._get_data()
-        self.err = np.empty(self.enc_x.size())
-        
+
     def _calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
 
     def predict(self):
         ## Iterative procedure to get around lack of efficient inverses...
+        self.p2p_receiver.receive(self.data_file)
+        self.enc_x, self.enc_y = self._get_data()
+        self.err = np.empty(self.enc_x.size())
         for k in range(100): ## change with residual condition later
             try:
                 self._calc_loss()
@@ -101,8 +96,6 @@ class EncryptedLinReg(EncryptedOperations):
                 self.p2p_sender.send(self.result_file)
                 self.p2p_sender.send(self.flag_file)
                 self.p2p_receiver.receive(self.result_file)
-                data, self.beta = self._get_data_and_results()
-                self.enc_x, self.enc_y = data
                 self.dbeta = 0
 
                 print("BOOTSTRAP")

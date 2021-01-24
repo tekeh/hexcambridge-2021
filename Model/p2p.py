@@ -7,7 +7,7 @@ class Sender():
     self.port = port
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.type = 'sender'
- 
+
   def open(self):
     try:
       self.socket.connect((self.address, self.port))
@@ -62,7 +62,7 @@ class Receiver():
   def close(self):
     self.client_connection.shutdown(1)
     self.client_connection.close()
-        
+
   def receive(self, file_name, socket_buffer_size=1024):
     self.open()
 
@@ -79,7 +79,7 @@ class Receiver():
               break
           # remove the length bytes from the front of frameBuffer
           # leave any remaining bytes in the frameBuffer!
-          length_str, ignored, frameBuffer = frameBuffer.partition(b':') 
+          length_str, ignored, frameBuffer = frameBuffer.partition(b':')
           #print(int(length_str))
           length = int(length_str)
           break
