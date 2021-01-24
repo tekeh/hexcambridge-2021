@@ -8,8 +8,8 @@ from kivy.uix.textinput import TextInput
 import numpy as np
 
 import sys
-sys.path.append('/home/res0lve/research/hexcambridge-2021/Model')
-import local_run as chive
+# sys.path.append('/home/res0lve/research/hexcambridge-2021/Model')
+# import local_run as chive
 
 
 import os
@@ -58,7 +58,8 @@ class Root(FloatLayout):
         self.dismiss_popup()
 
     def encrypt_and_compute(self):
-        chive.main(x=self.plain_x_dat, y=self.plain_y_dat)
+        # chive.main(x=self.plain_x_dat, y=self.plain_y_dat)
+        pass
 
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
