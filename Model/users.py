@@ -23,14 +23,15 @@ class DataOwner:
         f.write(data_serial)
         f.close()
 
-  def make_package(self, enc_data, data_file, enc_res=None, res_file=None):
+  def package_data(self, enc_data, data_file):
     public_serial = self.public_context.serialize()
     with open('public_key.bin', 'wb') as f:
         f.write(public_serial)
         f.close()
     self._serialize(enc_data, data_file)
-    if enc_res is not None:
-        self._serialize(enc_res, res_file)
+
+  def package_result(self, enc_res, result_file):
+      self._serialize(enc_res, result_file)
 
   def receive_results(self, result_file, flag_file):
       with open('{}.bin'.format(result_file), 'rb') as f:
