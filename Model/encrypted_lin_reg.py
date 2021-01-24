@@ -28,7 +28,8 @@ class LocalOperations:
         self.p2p_sender.send(self.data_file)
 
     def _listen(self):
-        self.p2p_receiver.receive()
+        self.p2p_receiver.receive(self.result_file)
+        self.p2p_receiver.receive(self.flag_file)
         flag, result = self.owner.receive_results(self.result_file, self.flag_file)
         return flag, result
 
@@ -70,6 +71,8 @@ class EncryptedLinReg(EncryptedOperations):
     def __init__(self, data_file, result_file, p2p_node):
         super().__init__(data_file, result_file, p2p_node)
 
+        self.p2p_receiver.receive(self.data_file)
+
         # regression specific params
         self.count = 0 ## Number of operations
         self.beta = 0.5
@@ -77,12 +80,11 @@ class EncryptedLinReg(EncryptedOperations):
         self.learning_rate = 0.1
         self.enc_x, self.enc_y = self._get_data()
         self.err = np.empty(self.enc_x.size())
-
+        
     def _calc_loss(self):
         self.err = self.enc_y - self.beta*self.enc_x ## 1D
 
     def predict(self):
-        self.receiver.receive()
         ## Iterative procedure to get around lack of efficient inverses...
         for k in range(100): ## change with residual condition later
             try:
@@ -98,7 +100,7 @@ class EncryptedLinReg(EncryptedOperations):
                 self._pack(self.beta, False)
                 self.p2p_sender.send(self.result_file)
                 self.p2p_sender.send(self.flag_file)
-                self.p2p_receiver.receive()
+                self.p2p_receiver.receive(self.result_file)
                 data, self.beta = self._get_data_and_results()
                 self.enc_x, self.enc_y = data
                 self.dbeta = 0
